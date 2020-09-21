@@ -1,0 +1,115 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="index.css" />
+  </head>
+  <body>
+    <h1>Text above slider</h1>
+    <svg
+      width="100%"
+      viewBox="0 0 100 60"
+      id="carousel"
+    >
+      <defs>
+        <mask id="Mask">
+          <linearGradient id="boxGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color: #333;stop-opacity: 1" />
+            <stop offset="30%" style="stop-color: white;stop-opacity: 1" />
+            <stop offset="60%" style="stop-color: white;stop-opacity: 1" />
+            <stop offset="100%" style="stop-color: #333;stop-opacity: 1" />
+          </linearGradient>
+          <rect
+            x="2.5"
+            y="2.5"
+            width="95"
+            height="50"
+            rx="2"
+            style="fill: url(#boxGradient);"
+          />  
+          <rect
+            x="5"
+            y="5"
+            width="90"
+            height="30"
+            rx="2"
+            style="fill: black;"
+          />  
+          <text
+            id="dog-name"
+            x="10"
+            y="49"
+            style="
+              font-family: Impact, Arial, Helvetica, sans-serif;
+              font-size: 11pt;
+              font-weight: bold;
+              fill: black;
+            "
+          />
+          </mask>
+      </defs>
+      <g id="dogImages">
+
+      </g>
+      <rect
+        mask="url(#Mask)"
+        x="2.5"
+        y="2.5"
+        width="95"
+        height="50"
+        rx="2"
+        style="fill: rgba(255, 255, 255, 0.7); pointer-events: none;"
+      />
+      <text
+        id="dog-text"
+        x="5"
+        y="58.5"
+        style="
+          font-family: Arial, Helvetica, sans-serif;
+          font-size: 5pt;
+          font-weight: bold;
+          fill: white;
+          pointer-events: none;
+        "
+      />
+    </svg>
+
+    <h1>Text below slider</h1>
+
+<script>
+const URL = "https://gist.githubusercontent.com/jherr/389adc1e3b0c26f17fbd599b06dc4924/raw/2dcd2974b41cf5da5ca97886314e2bdcdfd4025e/dogs.json";
+fetch(URL)
+.then(resp => resp.json())
+.then(dogs => {
+  let current = 0;
+
+  const dogImages = document.getElementById('dogImages');
+  dogs.forEach(dog => {
+    const dogImage = document.createElementNS("http://www.w3.org/2000/svg", "image");
+    dogImage.x.baseVal.value = 0;
+    dogImage.y.baseVal.value = 0;
+    dogImage.width.baseVal.value = 100;
+    dogImage.setAttribute("href", dog.url);
+    dogImage.className = "dog-image";
+    dogImages.appendChild(dogImage);
+    dog.img = dogImage;
+  });
+
+  const update = () => {
+    document.getElementById("dog-text").innerHTML = dogs[current].text;
+    document.getElementById("dog-name").innerHTML = dogs[current].name;
+    dogs.forEach(({ img }, index) => {
+      img.x.baseVal.value = current * - 100 + index * 100;
+    })
+  }
+  update();
+
+  document.getElementById("carousel").addEventListener("click", () => {
+    current += 1;
+    if (current >= dogs.length) {
+      current = 0;
+    }
+    update();
+  })
+});      
+</script>
+  </body>
+</html>
